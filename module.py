@@ -27,10 +27,6 @@ def dispersion(covs) :
         disp += np.power(riemann.utils.distance.distance_riemann(covs[i], np.eye(covs.shape[1])), 2)
     return disp/covs.shape[0]
         
-    # return(
-    #     np.sum(
-    #         np.power(
-    #             [riemann.utils.distance.distance_riemann(cov, np.eye(n_channel)) for cov in covs], 2))/n_trial)
 
 def stretch(cov, dispersion) :
     return riemann.utils.base.powm(cov, dispersion)
@@ -63,9 +59,12 @@ def RPA_recenter(source, target_train, target_test) :
     target_train_rct['labels'] = target_train['labels']
     target_test_rct['labels'] = target_test['labels']
     
-    source_rct['covs'] = np.array([recenter(cov, geometric_mean(source['covs'])) for cov in source['covs']])
-    target_train_rct['covs'] = np.array([recenter(cov, geometric_mean(target_train['covs'])) for cov in target_train['covs']])
-    target_test_rct['covs'] = np.array([recenter(cov, geometric_mean(target_test['covs'])) for cov in target_test['covs']])
+    mean_source = geometric_mean(source['covs'])
+    source_rct['covs'] = np.array([recenter(cov, mean_source) for cov in source['covs']])
+    mean_target_train = geometric_mean(target_train['covs'])
+    target_train_rct['covs'] = np.array([recenter(cov, mean_target_train) for cov in target_train['covs']])
+    mean_target_test = geometric_mean(target_test['covs'])
+    target_test_rct['covs'] = np.array([recenter(cov, mean_target_test) for cov in target_test['covs']])
     return(source_rct, target_train_rct, target_test_rct)
 
 def RPA_stretch(source, target_train, target_test) :
